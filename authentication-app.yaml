@@ -1,0 +1,143 @@
+openapi: 3.0.0
+info:
+  title: Authentication App API
+  description: Authentication App API for Jabar Digital Service Software Back End Engineer Recruitment. This API is purposed for handle user creation and user authentication.
+  contact:
+    name: Winda Amelia Hidayat
+    email: windahidayat27@gmail.com
+  version: 1.0.0
+servers:
+  - url: http://13.250.42.248:3000/api/v1
+  
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    
+paths:
+  /user:
+    description: Create new user
+    post:
+      description: Operation to insert a new user data
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                nik:
+                  type: string
+                  minLength: 16
+                  maxLength: 16
+                  example: "1234567891234567"
+                role:
+                  type: string
+                  example: "admin"
+                generate_password:
+                  type: string
+                  maxLength: 6
+                  example: "123456"
+      responses:
+        201:
+          description: Success, new user was successfully added
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    example: "61c07cf5e403fb1ec7223a1e"
+                  nik:
+                    type: string
+                    minLength: 16
+                    maxLength: 16
+                    example: "1234567891234567"
+                  role:
+                    type: string
+                    example: "admin"
+        400:
+          description: Error, user is not added
+          
+  /user/auth:
+    description: Authenticate JWT
+    get:
+      description: Operation to authenticate JWT is valid or not
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: Success, JWT is valid
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  sub:
+                    type: string
+                    example: "1234567891234567"
+                  nik:
+                    type: string
+                    minLength: 16
+                    maxLength: 16
+                    example: "1234567891234567"
+                  password:
+                    type: string
+                    maxLength: 6
+                    example: "123456"
+                  iat:
+                    type: number
+                    example: 1640004919
+                  exp:
+                    type: number
+                    example: 1640048119
+        403:
+          description: Error, JWT is invalid
+        401:
+          description: Unauthorized, needed Bearer Token as Authorization header
+    post:
+      description: Operation to authenticate user and generate JWT if user was successfully authenticated
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                nik:
+                  type: string
+                  minLength: 16
+                  maxLength: 16
+                  example: "1234567891234567"
+                password:
+                  type: string
+                  maxLength: 6
+                  example: "123456"
+      responses:
+        200:
+          description: Success, user was successfully authenticated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    example: "61c07cf5e403fb1ec7223a1e"
+                  nik:
+                    type: string
+                    minLength: 16
+                    maxLength: 16
+                    example: "1234567891234567"
+                  role:
+                    type: string
+                    example: "admin"
+                  jwt:
+                    type: string
+                    example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkxMjM0NTY3IiwibmlrIjoiMTIzNDU2NzG6iuyzNDU2NyIsInBhc3N3b3JkIjoiMTIzNDU2IiwiaWF0IjoxNjQwMDA0OTE5LCJleHAiOjE2NDAwNDgoIY9.CVAnYvrZDLnZiGsTHCl1DbePH7s6sUx9cTUeu__AuYs"
+        400:
+          description: Error, password is incorrect
+        500:
+          description: Internal Server Error
+          
